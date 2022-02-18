@@ -8,9 +8,11 @@ use App\Models\File;
 use Carbon\Carbon;
 use DB;
 use Mail;
+use App\Traits\EmailTrait;
 
 class HomeController extends Controller
 {
+	use EmailTrait;
     /**
      * Create a new controller instance.
      *
@@ -29,8 +31,6 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-		
-				
         $q = null;
 
         if ($request->has('q')) $q = $request->query('q');
