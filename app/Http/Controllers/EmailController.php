@@ -23,8 +23,6 @@ class EmailController extends Controller
 		 foreach($data['attachments'] as $attachment){
          $message->attach($attachment);
 		 }}
-         //$message->attach('C:\laravel-master\laravel\public\uploads\test.txt');
-         $message->from('maruthu.xvalue@gmail.com','Maruthupandi');
       });
       
    }
