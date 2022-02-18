@@ -530,6 +530,84 @@ class FileController extends Controller
      */
     public function store(FileRequest $request, File $file)
     {
+/*
+$uploaded_file = $request->file('uploaded_file');
+		
+if ($uploaded_file) 
+{
+	$filename = $uploaded_file->getClientOriginalName();
+	$extension = $uploaded_file->getClientOriginalExtension(); //Get extension of uploaded uploaded_file
+	$tempPath = $uploaded_file->getRealPath();
+	$fileSize = $uploaded_file->getSize(); //Get size of uploaded file in bytes
+	//Check for file extension and size
+	$this->checkUploadedFileProperties($extension, $fileSize);
+	//Where uploaded file will be stored on the server 
+	//$location = 'uploads'; //Created an "uploads" folder for that
+	// Upload file
+	//$uploaded_file->move($location, $filename);
+	// In case the uploaded file path is to be stored in the database 
+	//$filepath = public_path($location . "/" . $filename);
+	// Reading uploaded_file
+	$uploaded_file = fopen($tempPath, "r");
+	$importData_arr = array(); // Read through the file and store the contents as an array
+	$i = 0;
+	//Read the contents of the uploaded file 
+	while (($filedata = fgetcsv($uploaded_file, 1000, ",")) !== FALSE) 
+	{
+		$num = count($filedata);
+		// Skip first row (Remove below comment if you want to skip the first row)
+		if ($i == 0) 
+		{
+			$i++;
+			continue;
+		}
+		$filedataArr = [];
+		//for ($c = 0; $c < $num; $c++) { 
+		$client = Client::where('name',$filedata[1])->first();
+		$lob = lob::where('name',$filedata[2])->first();
+		$sublob = sublob::where('name',$filedata[3])->first();
+		$state = state::where('name',$filedata[4])->first();
+		$city = city::where('name',$filedata[5])->first();
+		$hub = hub::where('name',$filedata[6])->first();
+		$location = location::where('name',$filedata[7])->first();
+		$multiplelocation = $filedata[8];
+		$agent_name = $filedata[9];
+		$custref = lookup::where('type','reflabel')->where('tag',$filedata[10])->first();
+		$policyno = $filedata[11];;
+		$otherreflabel = lookup::where('type','otherreflabel')->where('tag',$filedata[12])->first();
+		$otherref = $filedata[13];
+		$receivedon = $filedata[14];
+		$name = $filedata[15];
+		$fathername = $filedata[16];
+		$dob = $filedata[17];
+		$nominee = $filedata[18];
+		$relation = lookup::where('type','Relation')->where('tag',$filedata[19])->first();
+		$address = $filedata[20];
+		$pincode = $filedata[21];
+		$mobile1 = $filedata[22];
+		$mobile2 = $filedata[23];
+		$email = $filedata[24];
+	    
+	         if($client)
+			 {
+				 $client_id = $client->id;
+				 
+				 if($lob)
+				 {
+					$filedataArr[]=array('clientid',$client_id,'lobid'=>$lob->id); 
+				 }
+			 }
+			 
+			//$importData_arr[$i][] = $filedata[$c];
+		//}
+		$i++;
+	}
+	fclose($uploaded_file); //Close after reading
+	
+
+}	
+*/		
+
         $request->validated();
 
         $file->fill($request->except('lobid', 'getFileId', 'getResponse', 'getauthid'));
@@ -606,6 +684,19 @@ class FileController extends Controller
             ->route('files.index')
             ->withSuccess("New Case with id {$file->id} was created");
     }
+	public function checkUploadedFileProperties($extension, $fileSize)
+	{
+	$valid_extension = array("csv"); //Only want csv and excel files
+	$maxFileSize = 2097152; // Uploaded file size limit is 2mb
+	if (in_array(strtolower($extension), $valid_extension)) {
+	if ($fileSize <= $maxFileSize) {
+	} else {
+	throw new \Exception('No file was uploaded', Response::HTTP_REQUEST_ENTITY_TOO_LARGE); //413 error
+	}
+	} else {
+	throw new \Exception('Invalid file extension', Response::HTTP_UNSUPPORTED_MEDIA_TYPE); //415 error
+	}
+	}
 
     /**
      * Display the specified resource.
